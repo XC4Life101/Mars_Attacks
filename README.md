@@ -1,2 +1,2 @@
-# Ad Crasher
-A game where you destroy ads that are attacking a web browser
+# Mars_Attacks
+Collect samples on Mars while dodging aliens, meteors, the like. 

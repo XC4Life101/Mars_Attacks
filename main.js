@@ -18,4 +18,14 @@ window.addEventListener("load", function(){
 
         }
     }
+    const game = new Game(canvas.width, canvas.height);
+
+    function gameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+        game.update();  // Update game state
+        game.draw();    // Draw everything on the canvas
+        requestAnimationFrame(gameLoop); // Loop again
+    }
+
+    gameLoop(); // Start the loop
 });
