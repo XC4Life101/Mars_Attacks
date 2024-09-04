@@ -5,8 +5,10 @@ export class Game {
     constructor() {
         this.canvas = document.getElementById('canvas1');
         this.ctx = this.canvas.getContext('2d');
-        this.width = this.canvas.width = 2000; // Canvas width
+        this.width = this.canvas.width = 1600; // Canvas width
         this.height = this.canvas.height = 1040; // Canvas height
+        this.sampleCountElement = document.getElementById('sampleCount');
+        this.samplesCollected = 0;
         this.terrain = new Terrain(this);
         this.player = new Player(this);
         this.input = []; // Store the current keys being pressed
@@ -24,8 +26,8 @@ export class Game {
             this.input = this.input.filter(key => key !== e.key);
         });
 
-
         this.startGameLoop();
+        this.updateSampleCount();
     }
 
     startGameLoop() {
@@ -39,6 +41,21 @@ export class Game {
 
     update() {
         this.player.update(this.input);
+        this.checkForCollisions();
+    }
+
+    checkForCollisions() {
+        this.player.checkForCollisions();
+    }
+
+    collectSample() {
+        this.samplesCollected++;
+        this.updateSampleCount();
+    }
+
+    updateSampleCount() {
+        // Update the sidebar with the current sample count
+        this.sampleCountElement.textContent = this.samplesCollected;
     }
 
     draw() {
