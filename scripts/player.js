@@ -1,11 +1,12 @@
 export class Player {
     constructor(game) {
         this.game = game;
-        this.width = 40; // Width of a single frame
-        this.height = 50; // Height of a single frame
-        this.x = this.game.width / 2 - this.width / 2;
-        this.y = this.game.height / 2 - this.height / 2;
-        this.speed = 5;
+        this.tileSize = 80;
+        this.width = 65; // Width of a single frame
+        this.height = 80; // Height of a single frame
+        this.x = (Math.floor((this.game.width / 2) / this.tileSize) * this.tileSize) + 7;
+        this.y = Math.floor((this.game.height / 2) / this.tileSize) * this.tileSize;
+        this.speed = this.tileSize;
 
         // Initialize images
         this.images = [];
@@ -20,31 +21,57 @@ export class Player {
         this.frameTimer = 0; // Timer to manage frame speed
         this.direction = 'down'; // Initial direction
         this.flipX = false; // Whether to flip the x-axis
+
+        this.keys = {}; // Track key states
+        this.moved = false; // Track if the player has moved
+
+        window.addEventListener('keydown', (e) => this.handleKeyDown(e));
+        window.addEventListener('keyup', (e) => this.handleKeyUp(e));
     }
 
-    update(input) {
-        // Handle movement and direction
-        if (input.includes('ArrowUp')) {
-            this.y -= this.speed;
+    handleKeyDown(e) {
+        this.keys[e.key] = true;
+        if (!this.moved) { // Only move if the player hasn't moved yet
+            if (e.key === 'ArrowUp') {
+                this.move(0, -this.speed, 'up');
+            }
+            if (e.key === 'ArrowDown') {
+                this.move(0, this.speed, 'down');
+            }
+            if (e.key === 'ArrowLeft') {
+                this.move(-this.speed, 0, 'left');
+                this.flipX = false;
+            }
+            if (e.key === 'ArrowRight') {
+                this.move(this.speed, 0, 'right');
+                this.flipX = true;
+            }
         }
-        if (input.includes('ArrowDown')) {
-            this.y += this.speed;
-        }
-        if (input.includes('ArrowLeft')) {
-            this.x -= this.speed;
-            this.direction = 'left';
-            this.flipX = false;
-        }
-        if (input.includes('ArrowRight')) {
-            this.x += this.speed;
-            this.direction = 'right';
-            this.flipX = true;
+    }
+
+    handleKeyUp(e) {
+        this.keys[e.key] = false;
+        this.moved = false; // Reset movement flag when key is released
+    }
+
+    move(dx, dy, direction) {
+        let newX = this.x + dx;
+        let newY = this.y + dy;
+
+        // Check for collision with rock tiles
+        if (!this.game.terrain.isRockTile(newX, newY)) {
+            this.x = newX;
+            this.y = newY;
+            this.direction = direction;
+            this.moved = true;
         }
 
         // Keep the player within the canvas boundaries
         this.x = Math.max(0, Math.min(this.x, this.game.width - this.width));
         this.y = Math.max(0, Math.min(this.y, this.game.height - this.height));
+    }
 
+    update() {
         // Update frame timer and currentFrame for animation
         this.frameTimer++;
         if (this.frameTimer >= this.frameSpeed) {

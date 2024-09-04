@@ -5,8 +5,8 @@ export class Game {
     constructor() {
         this.canvas = document.getElementById('canvas1');
         this.ctx = this.canvas.getContext('2d');
-        this.width = this.canvas.width = 1000; // Canvas width
-        this.height = this.canvas.height = 550; // Canvas height
+        this.width = this.canvas.width = 2000; // Canvas width
+        this.height = this.canvas.height = 1040; // Canvas height
         this.terrain = new Terrain(this);
         this.player = new Player(this);
         this.input = []; // Store the current keys being pressed
